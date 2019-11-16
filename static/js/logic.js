@@ -25,7 +25,7 @@ function createFeatures(earthquakeData) {
     // Run the onEachFeature function once for each piece of data in the array
     var earthquakes = L.geoJSON(earthquakeData, {
         
-      // **Add references looked up about Leaflet pointToLayer here **
+      // **Add links looked up about Leaflet pointToLayer here for future reference**
         // See https://leafletjs.com/examples/geojson/  and https://geospatialresponse.wordpress.com/2015/07/26/leaflet-geojson-pointtolayer/
 
       pointToLayer: function (feature, latlng) {
@@ -51,7 +51,7 @@ function createMap(earthquakes) {
 // function createMap(earthquakes, tecPlates) {
 
   // Create the tile layer that will be the background of our map
-  var lightmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  var comicmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
       attribution: "Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>",
       maxZoom: 18,
       id: "mapbox.comic",
@@ -61,42 +61,40 @@ function createMap(earthquakes) {
   var outdoormap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
       attribution: "Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>",
       maxZoom: 18,
-      //outdoors
-      id: "mapbox.pencil",
+      id: "mapbox.outdoors",
       accessToken: API_KEY
   });    
 
   var satellitemap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
       attribution: "Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"http://mapbox.com\">Mapbox</a>",
       maxZoom: 18,
-      //satellite
-      id: "mapbox.pirates",
+      id: "mapbox.satellite",
       accessToken: API_KEY
   });
     
-  var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  var piratemap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
       attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
       maxZoom: 18,
-      //streets
-      id: "mapbox.emerald",
+      id: "mapbox.pirates",
       accessToken: API_KEY
   });
 
-  var darkmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  var contrastmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
       attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
       maxZoom: 18,
-      //dark
       id: "mapbox.high-contrast",
       accessToken: API_KEY
   });
 
   // Define a baseMaps object to hold the base layers
+  //  Played with several types inlcuding light, dark, outdoors, streets, satellite, comic, pencil, pirates, emerald, and high-contrast.
+  //    Found list here: https://gis.stackexchange.com/questions/244788/map-ids-to-add-mapbox-basemaps-to-leaflet-or-openlayers/244797
   var baseMaps = {
-    "Light Map": lightmap,
-    "Dark Map": darkmap,
+    "Comic Map": comicmap,
+    "Pirate Map": piratemap,
     "Outdoor Map": outdoormap,
-    "Street Map": streetmap,
-    "Satellite Map": satellitemap
+    "Satellite Map": satellitemap,
+    "High-Contrast Map": contrastmap
   };
   
   // Create tectonic plate layer
@@ -108,12 +106,11 @@ function createMap(earthquakes) {
     "Tectonic Plates" : tecPlates
   };
   
-  // Create our map, giving it the lightmap and earthquakes layers & tec plates to display on load
+  // Create our map, giving it the comicmap and earthquakes layers & tec plates to display on load
   var myMap = L.map("map", {
     center: [50, -110],
     zoom: 3,
-    // layers: [lightmap, earthquakes]
-    layers: [lightmap, earthquakes, tecPlates]
+    layers: [comicmap, earthquakes, tecPlates]
   });
   
   // Add the plate lines to the tectonic layer
@@ -133,6 +130,7 @@ function createMap(earthquakes) {
 
 
   // Create a legend to display information about our map
+  //  Note to self, CSS also important here - see also/addl leafletjs link below
   var legend = L.control({
     position: "bottomright"
   });
@@ -161,35 +159,35 @@ function createMap(earthquakes) {
 // Function that will determine the color based on magnitude of the earthquake
 // red, orange, yellow, green, purple, black
 // Red, OrangeRed, Orange, Yellow, Gold, Khaki
-// function getColor(mag) {
-//   switch (true) {
-//   case (mag >= 5):
-//     return "Red";
-//     break;
-//   case (mag >= 4):
-//     return "OrangeRed";
-//     break;
-//   case (mag >= 3):
-//     return "Orange";
-//     break;
-//   case (mag >= 2):
-//     return "Yellow";
-//     break;
-//   case (mag >= 1):
-//     return "Gold";
-//     break;
-//   default:
-//     return "Khaki";
-//   }
-// };
-function getColor(d) {
-  return d > 5 ? "Red":
-  d > 4 ? "OrangeRed":
-  d > 3 ? "Orange":
-  d > 2 ? "Yellow":
-  d > 1 ? "Gold":
-            "Khaki";
+function getColor(mag) {
+  switch (true) {
+  case (mag > 5):
+    return "#800026";
+    break;
+  case (mag > 4):
+    return "#BD0026";
+    break;
+  case (mag > 3):
+    return "#E31A1C";
+    break;
+  case (mag > 2):
+    return "#FC4E2A";
+    break;
+  case (mag > 1):
+    return "#FD8D3C";
+    break;
+  default:
+    return "#FEB24C";
+  }
 };
+// function getColor(d) {
+//   return d > 5 ? "#08519c":
+//          d > 4 ? "#3182bd":
+//          d > 3 ? "#6baed6":
+//          d > 2 ? "#9ecae1":
+//          d > 1 ? "#c6dbef":
+//                   "#eff3ff";
+// };
 
 
 // Function set radius of circle marker based on magnitude of the earthquake
